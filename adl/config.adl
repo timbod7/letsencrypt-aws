@@ -1,0 +1,9 @@
+module config
+{
+
+struct Config
+{
+    String domain;
+};
+
+};
