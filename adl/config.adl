@@ -3,7 +3,11 @@ module config
 
 struct Config
 {
-    String domain;
+  String certbotPath;
+  String awsHostedZoneId;
+  String basedir;
+  String email;
+  Vector<String> domains;
 };
 
 };

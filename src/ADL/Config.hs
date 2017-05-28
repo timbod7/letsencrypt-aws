@@ -12,19 +12,31 @@ import qualified Data.Text as T
 import qualified Prelude
 
 data Config = Config
-    { config_domain :: T.Text
+    { config_certbotPath :: T.Text
+    , config_awsHostedZoneId :: T.Text
+    , config_basedir :: T.Text
+    , config_email :: T.Text
+    , config_domains :: [T.Text]
     }
     deriving (Prelude.Eq,Prelude.Ord,Prelude.Show)
 
-mkConfig :: T.Text -> Config
-mkConfig domain = Config domain
+mkConfig :: T.Text -> T.Text -> T.Text -> T.Text -> [T.Text] -> Config
+mkConfig certbotPath awsHostedZoneId basedir email domains = Config certbotPath awsHostedZoneId basedir email domains
 
 instance AdlValue Config where
     atype _ = "config.Config"
     
     jsonGen = genObject
-        [ genField "domain" config_domain
+        [ genField "certbotPath" config_certbotPath
+        , genField "awsHostedZoneId" config_awsHostedZoneId
+        , genField "basedir" config_basedir
+        , genField "email" config_email
+        , genField "domains" config_domains
         ]
     
     jsonParser = Config
-        <$> parseField "domain"
+        <$> parseField "certbotPath"
+        <*> parseField "awsHostedZoneId"
+        <*> parseField "basedir"
+        <*> parseField "email"
+        <*> parseField "domains"
