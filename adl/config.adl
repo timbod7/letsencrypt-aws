@@ -1,6 +1,12 @@
 module config
 {
 
+union Verbosity
+{
+  Void quiet;
+  Void noisy;
+};
+
 /// Configuration specification for the letsencript-aws program
 struct Config
 {
@@ -19,6 +25,9 @@ struct Config
 
   /// The fully scoped DNS names required on the certificate
   Vector<String> domains;
+
+  /// How much logging output to generate
+  Verbosity verbosity = "quiet";
 };
 
 };

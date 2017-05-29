@@ -54,7 +54,7 @@ getCerts configPath c = do
 
 authHook :: Config -> IO ()
 authHook c = do
-  env <- mkAwsEnv
+  env <- mkAwsEnv c
   (certbotDomain,certbotValidation,hostedZone) <- getDnsDetails c
   let batch = changeBatch (pure (change Create rset))
       rset = resourceRecordSet  ("_acme-challenge." <> certbotDomain) Txt
@@ -68,7 +68,7 @@ authHook c = do
 
 cleanupHook :: Config -> IO ()
 cleanupHook c = do
-  env <- mkAwsEnv
+  env <- mkAwsEnv c
   (certbotDomain,certbotValidation,hostedZone) <- getDnsDetails c
   let batch = changeBatch (pure (change Delete rset))
       rset = resourceRecordSet  ("_acme-challenge." <> certbotDomain) Txt
@@ -87,11 +87,15 @@ getDnsDetails c = do
         Right hz -> hz
   return (certbotDomain,"\""<>certbotValidation<>"\"",hostedZone)
 
-mkAwsEnv :: IO Env
-mkAwsEnv = do
+mkAwsEnv :: Config -> IO Env
+mkAwsEnv c = do
   env0 <- newEnv Discover
-  l <- newLogger Debug stdout
+  l <- newLogger loglevel stdout
   return (env0 & envLogger .~ l)
+  where
+    loglevel = case config_verbosity c of
+      Verbosity_noisy -> Debug
+      Verbosity_quiet -> Error
 
 main :: IO ()
 main = do
